@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>                                                                              
+#include <pthread.h>
+
+/*
+*
+
+*
+* */
+pthread_mutex_t mutex;
+
+int g_tick = 100;
+void* thr_scalper(void* arg)
+{
+
+	while(1)
+	{
+
+		pthread_mutex_lock(&mutex);
+		if(g_tick > 0)
+		{
+			usleep(1000);
+			printf("%p get a ticket: %d\n",pthread_self(),g_tick);
+			g_tick--;
+			pthread_mutex_unlock(&mutex);
+		}
+		else{
+			pthread_mutex_unlock(&mutex);
+			pthread_exit(NULL);
+
+		}
+	}
+	return NULL;
+}
+int main()
+{
+	int i = 0;
+	pthread_t tid[4];
+
+	//初始化互斥锁
+	pthread_mutex_init(&mutex,NULL);
+
+	for( ; i < 4; i++ )
+	{
+		int   ret = pthread_create(&tid[i],NULL,thr_scalper,NULL);
+		if(ret != 0)
+		{
+			printf("pthread create error\n");
+			return -1;
+		}
+
+	}
+	for(i= 0;i < 4; i++)
+	{
+		pthread_join(tid[i],NULL);
+
+	}
+
+	//销毁互斥锁  
+	pthread_mutex_destroy(&mutex);
+	return 0;
+}                                  
