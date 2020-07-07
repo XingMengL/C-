@@ -1,0 +1,65 @@
+#include <pthread.h>                                                                             
+#include <queue>
+#include <iostream>
+
+#define MAX_QUEUE 5
+calss BlockQueue{
+private:
+	std::queue<int> _queue; // 线程的队列容器
+	int _capacity; // 队列中最大节点数量
+	pthread_mutex_t _mutex; // 互斥锁
+	pthread_cond_t _consumer_cond; //消费者队列
+	pthread_cond_t _productor_cond;// 生产者队列
+public:
+	BlockQueueint (int maxq = MAX_QUEUE):_capacity(maxq)
+	{
+		pthread_mutex_destoy(&mutex,NULL);
+		pthread_cond_destoy(&_consumer_cond,NULL);
+		pthread_cond_inti(&_productor_cond,NULL);
+
+
+	};
+	~BlockQueue(){
+
+		pthread_mutex_destoy(&_mutex);
+		pthread_cond_destoy(&_consumer_cond);
+		pthread_cond_inti(&_productor_cond);
+
+	};
+	bool Push(int data){
+
+		//加锁
+		pthread_mutex_lock(&_mutex)
+			//如果队列满了，阻塞
+			while(_queue.size() == _capacity)
+			{
+				pthread_cond_wait(&_productor_cond, &_mutex); // 阻塞等待
+			}
+			//被唤醒走下来，则表示可以添加数据了
+			_queue.push(data);
+			//解锁
+			pthread_mutex_unlock(&_mutex);
+			//唤醒消费者获取数据进行处理
+			pthread_cond_signal(&_consumer_cond )
+				return true;
+	};  // 线程安全的数据入队操作
+	bool Pop(int * data){
+
+		// 加锁
+		pthread_mutex_lock(&_mutex);
+		// 如果队列为空，则阻塞
+		while(_queue.empty())
+		{
+			pthread_cond_wait(&_consumer_cond, &_mutex);
+		}
+		//被唤醒走下来，则表示可以获取数据
+		*data = _queue.front(); //获取队首数据
+		_queue.pop();
+		//解锁
+		_pthread_mutex_unlock(&_mutex);
+		//唤醒生产者
+		pthread_cond_signal(&_productor_cond);
+		return true;
+	}; // 线程安全的数据出队操作
+
+}
