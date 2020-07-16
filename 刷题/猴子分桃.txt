@@ -1,0 +1,18 @@
+// write your code here cpp
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main()
+{
+    long n = 0;
+    while(cin>>n)
+    {
+        if(n == 0)
+            break;
+        long sum =(long) pow(5,n) - 4;
+        long old = (long)pow(4,n) -4 + n;
+            cout<<sum<<" "<<old<<endl;
+    }
+    return 0;
+}
