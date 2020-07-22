@@ -1,0 +1,25 @@
+// write your code here cpp
+#include <iostream>
+using namespace std;
+
+#include <vector>
+int main()
+{
+    vector<long> fibo(81,0);
+    fibo[1] = 1;
+    fibo[2] = 1;
+    for(int i = 3;i <= 80;i++)
+    {
+        fibo[i] = fibo[i-1]+fibo[i-2];
+    }
+    int from,to;
+    while(cin >> from>>to)
+    {
+        long count = 0;
+        for(int i = from; i <= to; i++)
+        {
+            count+=fibo[i];
+        }
+       cout<<count<<endl;
+    }
+}
