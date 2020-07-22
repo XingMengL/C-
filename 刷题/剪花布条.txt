@@ -1,0 +1,21 @@
+// write your code here cpp
+#include <iostream>
+using namespace std;
+
+#include <string>
+int main()
+{
+    string s1,s2;
+    while(cin >> s1 >> s2)
+    {
+        int res = 0;
+        size_t pos = 0;
+        while((pos = s1.find(s2,pos)) != string ::npos)
+        {
+            pos += s2.size();
+            res++;
+        }
+        cout<<res<<endl;
+    }
+    return 0;
+}
