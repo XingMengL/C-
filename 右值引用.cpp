@@ -61,6 +61,7 @@ int main()
 }
 #endif
 
+#if 0
 class String
 {
 public:
@@ -154,5 +155,150 @@ void func3()
 }
 int main()
 {
+	return 0;
+}
+#endif
+
+#if 0
+int main()
+{
+	[]{};
+
+	int a = 3, b = 4;
+	[=]{return a + 3;};
+
+	auto fun1 = [&](int c){b = a+c;};
+	fun1(10);
+	cout<<a<<" "<<b<<endl;
+
+	auto c = [=]{return a + b;};
+	cout<< c() <<endl;
+	
+
+	return 0;
+}
+#endif
+
+#if 0
+#include <thread>
+using namespace std;
+int main()
+{
+	thread t1;
+	thread t2;
+	thread t3;
+	cout<<t1.get_id()<<endl;
+	cout<<t2.get_id()<<endl;
+	cout<<t3.get_id()<<endl;
+	return 0;
+}
+#endif
+
+#if 0
+#include <thread>
+using namespace std;
+
+void ThreadFunc(int a)
+{
+	cout <<"Thread"<<a<<endl;
+}
+
+int main()
+{
+	thread t1(ThreadFunc,10);
+	thread t2([]{cout<<"thread2"<<endl;});
+	t1.join();
+    t2.join();
+    cout << "Main thread!" << endl;
+ 
+
+	return 0;
+}
+#endif
+#if 0 
+#pragma warning(disable:4996)
+#include <windows.h>
+int main()
+{
+	FILE * pFile; 
+	pFile = fopen("unexist.ent", "rb");  
+	if (pFile == NULL)
+		perror("The following error occurred");
+	else    
+		fclose(pFile); 
+	system("pasue");
+	return 0;
+}
+#endif
+
+#if 0
+#include <thread>
+using namespace std;
+
+// 借助thread创建线程的三种方式
+void ThreadFunc(int a)//函数指针
+{
+	cout <<"Thread"<<a<<endl;
+}
+
+class TF // 仿函数
+{
+public:
+	void operator()(int a)
+	{
+		cout<<"TF"<<a<<endl;
+	}
+	
+};
+
+//  一个线程对象只能和一个线程绑定
+//  线程对象之间不能相互赋值，也不能拷贝
+// thread类是防拷贝的，通过c++11中的delete将拷贝函数删除了
+int main()
+{
+	// 创建了线程对象，对象t1并没有与任何的线程进行关联
+	// 在系统层面并没有真正的创建线程
+	thread t1;
+	cout<<t1.get_id()<<endl;
+	if(!t1.joinable())
+	{
+		cout<<"无效的线程"<<endl;
+	}
+
+	thread t2(ThreadFunc,10);
+	thread t3(TF(),10);
+	thread t4([]{cout<<"lambda threade"<<endl;});
+
+	t2.join();
+	t3.join();
+	t4.join();
+
+	cout<<"main thread end"<<endl;
+	return 0;
+}
+#endif
+
+#include <thread>
+using namespace std;
+
+void ThreadFunc1(int &ra)
+{
+	ra*=10;
+}
+void ThreadFunc2(int *pa)
+{
+	*pa *=10;
+}
+// 每个线程都有自己独立的线程栈
+// ra引用的不是创建线程时所传递的实参，实参a实际是保存到线程栈中
+// 
+int main()
+{
+	int a = 10;
+
+	thread t1(ThreadFunc2,&a);
+	t1.join();
+
+	cout<<a<<endl;
 	return 0;
 }
