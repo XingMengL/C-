@@ -1,0 +1,24 @@
+#include <iostream>
+using namespace std;
+#include <string>
+
+int main()
+{
+    int n;
+    while(cin>>n)
+    {
+        int max = 0;
+        int count = 0;
+        string id,op;
+        while(n--)
+        {
+            cin>>id>>op;
+            if(op == "connect")
+                count++;
+            else
+                count--;
+            max = max > count? max : count;
+        }
+        cout<<max<<endl;
+    }
+}
