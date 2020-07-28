@@ -1,0 +1,45 @@
+// write your code here cpp
+#include <iostream>
+using namespace std;
+
+#include <vector>
+int count = 0; 
+int m,n;
+void func(vector<vector<char>>& v,int x,int y)
+{
+    if(x < 0 || x >= m || y < 0 || y >= n || v[x][y] == '#')
+        return;
+    count++;
+    v[x][y] = '#';
+    func(v,x-1,y); // up
+    func(v,x+1,y); // dn
+    func(v,x,y-1); //left
+    func(v,x,y+1); // right
+}
+int main()
+{
+   
+    while(cin>>m>>n)
+    {
+        vector<vector<char>> v(m,vector<char>(n));
+        int x = 0, y = 0;
+        for(int i = 0; i < m; i++)
+        {
+            for(int j = 0; j < n; j++)
+            {  cin>>v[i][j];
+            if('@' == v[i][j])
+            {
+                x = i;
+                y = j;
+            }
+           }
+        }
+        func(v,x,y);
+        cout<<count<<endl;
+        count = 0;
+        m = 0;
+    n = 0;
+    }
+   
+    return 0;
+}
