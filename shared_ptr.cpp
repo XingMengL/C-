@@ -310,6 +310,7 @@ int main()
 }
 #endif
 
+#if 0
 /*
 shared_ptr优点：可以实现对象之间资源共享
 shared_ptr缺陷：存在循环引用
@@ -346,5 +347,258 @@ void Test()
 int main()
 {
 	Test();
+	return 0;
+}
+#endif
+
+#if 0
+void TestFunc1()
+{
+	FILE* pf = fopen("11111111.txt","rb");
+	if(pf == nullptr)
+	{
+		throw 1;
+	}
+
+	fclose(pf);
+}
+
+void TestFunc()
+{
+	int* p = new int[10];
+
+		delete p;
+}
+
+int main()
+{
+
+return 0;
+}
+#endif
+
+/*
+	RAII: 资源获取即初始化
+	在构造函数中接收资源，在析构函数中释放资源。
+	即：将资源委托给一个对象来控制
+*/
+
+#if 0
+template<class T>
+class smart_ptr
+{
+public:
+	// RAII的思想来管理资源，好处：该资源不用手动释放
+	/*
+		缺陷：当使用一个smart_ptr对象构造一个新的对象时或者 两个对象在赋值时
+		而该类的拷贝构造函数和赋值运算符重载没有实现，那么编译器按照浅拷贝的方式自己生成
+	*/
+	smart_ptr(T* ptr = nullptr)
+		:_ptr(ptr)
+	{}
+	~smart_ptr()
+	{
+		if(_ptr)
+		{
+			delete _ptr;
+		}
+	}
+
+	T* operator->()
+	{
+		return _ptr;
+	}
+
+	T& operator*()
+	{
+		return *_ptr;
+	}
+
+
+private:
+	T* _ptr;
+};
+
+bool TestFunc0()
+{
+	//xxxx
+
+	// 遇到非法错误
+	return false;
+
+	//xxxx
+	return true;
+}
+
+void TestFunc1()
+{
+	FILE* pf = fopen("1111111.txt", "rb");
+	if (pf == nullptr)
+	{
+		throw 1;
+	}
+
+	// 对文件进行响应的操作
+
+	fclose(pf);
+}
+
+
+// ...
+
+void TestFunc()
+{
+	smart_ptr<int> sp(new int);
+	*sp = 10;
+
+	// xxx
+
+	if (!TestFunc0())
+	{
+		return;
+	}
+
+	try
+	{
+		TestFunc1();
+	}
+	catch (...)
+	{
+		throw;
+	}
+
+	// 像该种中途退出的情况比较多，每个位置都需要对空间来进行释放，否则就会造成内存泄漏
+	// 因此在写代码时，要非常非常的谨慎
+
+	// 该出调用了一个第三方的函数
+}
+
+// 复杂的问题
+void TestSmartPtr()
+{
+	smart_ptr<int> sp1(new int);
+	*sp1 = 100;
+	smart_ptr<int> sp2(sp1);
+
+	smart_ptr<int>sp3;
+	sp3 = sp1;
+}
+int main()
+{
+	TestFunc();
+	return 0;
+}
+#endif
+
+
+#if 0
+/*
+	不能采用深拷贝的方式来解决浅拷贝的问题：因为智能指针不负责资源的申请。
+*/
+namespace bite
+{
+	/*
+		缺陷：不能同时访问一份资源
+		会造成野指针，很严重
+	*/
+	template<class T>
+	class auto_ptr
+	{
+	public:
+		auto_ptr(T* ptr)
+			:_ptr(ptr)
+			,_owner(false)
+		{
+			if(_ptr)
+				_owner = true;
+		}
+		~auto_ptr()
+		{
+			if(_ptr && _owner)
+			{
+				delete _ptr;
+				_owner = false;
+			}
+		}
+
+		T* operator->()
+		{
+			return _ptr;
+		}
+		T& operator*()
+		{
+			return *_ptr;
+		}
+
+
+		// 解决浅拷贝问题：采用资源的转移方式来解决问题
+		// 让一个对象拥有资源
+		auto_ptr(auto_ptr<T>& ap)
+			:_ptr(ap._ptr)
+			,_owner(ap._owner)
+		{
+			ap._owner = false;
+		}
+
+		auto_ptr<T>& operator=(auto_ptr<T>& ap)
+		{
+			if(this!=&ap)
+			{
+				// 当前对象本身管理资源了，那么将资源释放
+				if(_ptr && _owner)
+					delete _ptr;
+
+				_ptr = ap._ptr;
+				_owner = ap._owner;
+				ap._owner = false;
+			}
+			return *this;
+		}
+	private:
+		T* _ptr;
+		bool _owner; // false 当前对象没有权力释放资源
+	};
+}
+int main()
+{
+	
+	return 0;
+}
+#endif
+
+// unique——ptr 对象资源独占，不在共享
+template<class T>
+class unique_ptr
+{
+public:
+	unique_ptr(T* ptr = nullptr)
+		:_ptr(ptr)
+	{}
+	~unique_ptr()
+	{
+		if(_ptr)
+		{
+			delete _ptr;
+		}
+	}
+
+	T* operator->()
+	{
+		return _ptr;
+	}
+	T& operator*()
+	{
+		return *_ptr;
+	}
+	// 解决浅拷贝问题
+	unique_ptr(const unique_ptr<T>&);
+	unique_ptr<T>& operator=(const unique_ptr<T>&);
+
+private:
+	T* _ptr;
+};
+
+int main()
+{
 	return 0;
 }
