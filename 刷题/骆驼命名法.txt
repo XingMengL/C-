@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+
+#include <string>
+
+int main()
+{
+    string s1, s2;
+    while(cin>>s1)
+    {
+        int index = 0;
+        while((index = s1.find("_"))!=-1)
+        {
+            s1.erase(index,1);
+            s1[index] = s1[index] - 32;
+        }
+         cout<<s1<<endl;
+    }
+              
+              
+    return 0;
+}
