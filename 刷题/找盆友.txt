@@ -1,0 +1,58 @@
+class UFS
+{
+    public:
+	UFS(size_t size = 10)
+	{
+		v.resize(size,-1);
+	}
+	int Find(int x)
+	{
+		while(v[x] >= 0)
+		{
+			x =  v[x];
+		}
+		return x;
+	}
+
+	bool Union(int x1, int x2)
+	{
+		int root1 = Find(x1);
+		int root2 = Find(x2);
+
+		if(root1 == root2) // 本来就是一个集合
+			return false;
+		v[root1] += v[root2];
+		v[root2] = root1;
+
+		return true;
+	}
+
+    size_t Size()
+    {
+        int n = 0;
+        for(auto e: v)
+        {
+            if(e < 0)
+            ++n;
+        }
+        return n;
+    }
+	vector<int> v;
+};
+class Solution {
+public:
+    int findCircleNum(vector<vector<int>>& M) {
+        UFS ufs(M.size());
+        for(int i = 0; i < M.size();++i)
+        {
+            for(int j = 0;j< M[i].size();++j)
+            {
+                if(M[i][j] == 1)
+                {
+                    ufs.Union(i,j);
+                }
+            }
+        }
+    return ufs.Size();
+    }
+};
