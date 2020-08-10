@@ -1,0 +1,23 @@
+class Solution {
+public:
+    void reOrderArray(vector<int> &array) {
+        vector<int> v1;
+        vector<int> v2;
+        for(size_t i =0; i < array.size();i++)
+        {
+            if(array[i]%2 != 0)
+            {
+                v1.push_back(array[i]);
+                array[i] = -1;
+            }
+        }
+        for(size_t i =0; i < array.size();i++)
+        {
+            if(array[i] == -1)
+                continue;
+            else 
+                v1.push_back(array[i]);
+        }
+        array = v1;
+    }
+};
